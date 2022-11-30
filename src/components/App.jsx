@@ -4,6 +4,8 @@ import { Filter } from './Filter/Filter';
 import { Form } from './Form/Form';
 import { StyledH2 } from './App.styled';
 
+const LS_KEY = `contacts_list`;
+
 export class App extends Component {
   state = {
     contacts: [
@@ -15,11 +17,23 @@ export class App extends Component {
     filter: '',
   };
 
+  componentDidMount() {
+    const savedContacts = localStorage.getItem(LS_KEY);
+
+    if (savedContacts) {
+      this.setState({ contacts: JSON.parse(savedContacts) });
+    }
+  }
+
+  componentDidUpdate() {
+    localStorage.setItem(LS_KEY, JSON.stringify(this.state.contacts));
+  }
+
   contactsHandler = data => {
     const method = this.state.contacts.map(contact => contact.name);
 
     if (method.includes(data.name)) {
-      alert('NOPE');
+      alert(`${data.name} is already in contacts.`);
       return;
     } else {
       return this.setState({ contacts: [data, ...this.state.contacts] });
